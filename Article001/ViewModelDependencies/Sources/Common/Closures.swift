@@ -1,0 +1,1 @@
+typealias ReturnClosure<R> = () -> R
