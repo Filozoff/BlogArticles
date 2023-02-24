@@ -195,5 +195,5 @@ That does not affect a reference type or the `Binding`.
 
 ## Conclusion
 
-Passing dependencies to `ViewModel`s in `SwiftUI` may look very difficult at the first sight, however, it could be easily manageable. It is important to take into consideration all limitations and which data type while passing to a `ViewModel`.
+Passing dependencies to `ViewModel`s in `SwiftUI` may look very difficult at the first sight, however, it could be easily manageable. It is important to take into consideration all limitations and a data type while passing to a `ViewModel`.
 You may find working examples in [my  GitHub repository](https://github.com/Filozoff/BlogArticles/tree/master/Article001).
