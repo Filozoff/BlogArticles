@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ViewTwo: View {
 
-    @StateObject var viewModel: ViewTwoViewModel
+    @StateObject private var viewModel: ViewTwoViewModel
 
     init(viewModel: @escaping @autoclosure ReturnClosure<ViewTwoViewModel>) {
         _viewModel = .init(wrappedValue: viewModel())
