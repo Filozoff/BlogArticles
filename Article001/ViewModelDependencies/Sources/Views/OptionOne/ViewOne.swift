@@ -3,15 +3,13 @@ import SwiftUI
 struct ViewOne: View {
 
     let id: String
-    let name: String
-    let nameRepository: NameRepository
+    let userRepository: UserRepository
 
     @StateObject private var viewModel = ViewOneViewModel()
 
-    init(id: String, name: String, nameRepository: NameRepository) {
+    init(id: String, userRepository: UserRepository) {
         self.id = id
-        self.name = name
-        self.nameRepository = nameRepository
+        self.userRepository = userRepository
     }
 
     var body: some View {
@@ -20,14 +18,22 @@ struct ViewOne: View {
             HStack {
                 Text("Name: ")
                 TextField("type name", text: $viewModel.name)
+                if viewModel.isFetchingData {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                }
             }
+            .padding()
+            .background(.quaternary)
+            .cornerRadius(10)
+            .disabled(viewModel.isFetchingData)
+
             NavigationLink("Next View", value: RootView.Page.nextView)
         }
         .padding()
         .onLoad {
             viewModel.id = id
-            viewModel.name = name
-            viewModel.nameRepository = nameRepository
+            viewModel.userRepository = userRepository
         }
         .onAppear {
             viewModel.onAppear()
@@ -40,8 +46,7 @@ struct ViewOne_Previews: PreviewProvider {
     static var previews: some View {
         ViewOne(
             id: "test id",
-            name: "test name",
-            nameRepository: .init()
+            userRepository: .init()
         )
     }
 }

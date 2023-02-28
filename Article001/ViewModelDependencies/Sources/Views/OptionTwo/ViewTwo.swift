@@ -14,7 +14,16 @@ struct ViewTwo: View {
             HStack {
                 Text("Name: ")
                 TextField("type name", text: $viewModel.name)
+                if viewModel.isFetchingData {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                }
             }
+            .padding()
+            .background(.quaternary)
+            .cornerRadius(10)
+            .disabled(viewModel.isFetchingData)
+
             NavigationLink("Next View", value: RootView.Page.nextView)
         }
         .padding()
@@ -30,8 +39,7 @@ struct ViewTwo_Previews: PreviewProvider {
         ViewTwo(
             viewModel: .init(
                 id: "test id",
-                name: "test name",
-                nameRepository: .init()
+                userRepository: .init()
             )
         )
     }

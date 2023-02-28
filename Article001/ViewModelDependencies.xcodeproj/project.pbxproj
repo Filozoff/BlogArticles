@@ -14,7 +14,7 @@
 		660A2FE4296DF618000659C9 /* ViewTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660A2FE3296DF618000659C9 /* ViewTwo.swift */; };
 		660A2FE9296DF9EF000659C9 /* ViewTwoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660A2FE8296DF9EF000659C9 /* ViewTwoViewModel.swift */; };
 		660A2FEC296DFA42000659C9 /* Closures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660A2FEB296DFA42000659C9 /* Closures.swift */; };
-		660A2FEF296DFD0B000659C9 /* NameRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660A2FEE296DFD0B000659C9 /* NameRepository.swift */; };
+		660A2FEF296DFD0B000659C9 /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660A2FEE296DFD0B000659C9 /* UserRepository.swift */; };
 		6611A09A298717B7000741F2 /* ViewOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6611A099298717B7000741F2 /* ViewOne.swift */; };
 		6611A09C29871838000741F2 /* ViewOneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6611A09B29871838000741F2 /* ViewOneViewModel.swift */; };
 		66DC9F482989AA0D00E0846C /* OnLoadViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DC9F472989AA0D00E0846C /* OnLoadViewModifier.swift */; };
@@ -29,7 +29,7 @@
 		660A2FE3296DF618000659C9 /* ViewTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTwo.swift; sourceTree = "<group>"; };
 		660A2FE8296DF9EF000659C9 /* ViewTwoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTwoViewModel.swift; sourceTree = "<group>"; };
 		660A2FEB296DFA42000659C9 /* Closures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Closures.swift; sourceTree = "<group>"; };
-		660A2FEE296DFD0B000659C9 /* NameRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameRepository.swift; sourceTree = "<group>"; };
+		660A2FEE296DFD0B000659C9 /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		6611A09729871489000741F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6611A099298717B7000741F2 /* ViewOne.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewOne.swift; sourceTree = "<group>"; };
 		6611A09B29871838000741F2 /* ViewOneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewOneViewModel.swift; sourceTree = "<group>"; };
@@ -131,7 +131,7 @@
 		660A2FED296DFC69000659C9 /* Repository */ = {
 			isa = PBXGroup;
 			children = (
-				660A2FEE296DFD0B000659C9 /* NameRepository.swift */,
+				660A2FEE296DFD0B000659C9 /* UserRepository.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -222,7 +222,7 @@
 				660A2FE4296DF618000659C9 /* ViewTwo.swift in Sources */,
 				660A2FEC296DFA42000659C9 /* Closures.swift in Sources */,
 				6611A09A298717B7000741F2 /* ViewOne.swift in Sources */,
-				660A2FEF296DFD0B000659C9 /* NameRepository.swift in Sources */,
+				660A2FEF296DFD0B000659C9 /* UserRepository.swift in Sources */,
 				660A2FE9296DF9EF000659C9 /* ViewTwoViewModel.swift in Sources */,
 				660A2FD5296DF5B7000659C9 /* ViewModelDependenciesApp.swift in Sources */,
 			);

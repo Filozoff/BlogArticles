@@ -6,7 +6,7 @@ struct RootView: View {
     @State private var path = [Page]()
     @State private var isVisible = true
 
-    private let nameRepository = NameRepository()
+    private let userRepository = UserRepository()
 
     init() { }
 
@@ -44,16 +44,14 @@ struct RootView: View {
                 case .optionOne(let id):
                     ViewOne(
                         id: id,
-                        name: "",
-                        nameRepository: nameRepository
+                        userRepository: userRepository
                     )
 
                 case .optionTwo(let id):
                     ViewTwo(
                         viewModel: .init(
                             id: id,
-                            name: "",
-                            nameRepository: nameRepository
+                            userRepository: userRepository
                         )
                     )
 
