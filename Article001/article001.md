@@ -25,9 +25,45 @@ class ViewOneViewModel: ObservableObject {
     @Published var id = "nil"
     @Published var name = ""
 
-    var nameRepository: NameRepository?
+    var userRepository: UserRepository?
+
+    @Published private(set) var isFetchingData = false
+
+    private var currentTask: Task<Void, Error>?
 
     init() { }
+
+    deinit {
+        currentTask?.cancel()
+    }
+
+    private func fetchUserData() {
+        guard !isFetchingData else { return }
+        isFetchingData = true
+        currentTask = Task { [weak self] in
+            do {
+                guard let id = self?.id,
+                      let repository = self?.userRepository
+                else { return }
+
+                let name = try await repository.fetchName(id: id)
+                self?.name = name
+            } catch {
+                print(error.localizedDescription)
+            }
+
+            self?.isFetchingData = false
+        }
+    }
+}
+
+// MARK: - Actions
+
+extension ViewOneViewModel {
+
+    func onAppear() {
+        fetchUserData()
+    }
 }
 ```
 
@@ -37,30 +73,38 @@ class ViewOneViewModel: ObservableObject {
 struct ViewOne: View {
 
     let id: String
-    let name: String
-    let nameRepository: NameRepository
+    let userRepository: UserRepository
 
     @StateObject private var viewModel = ViewOneViewModel()
 
-    init(id: String, name: String, nameRepository: NameRepository) {
+    init(id: String, userRepository: UserRepository) {
         self.id = id
-        self.name = name
-        self.nameRepository = nameRepository
+        self.userRepository = userRepository
     }
 
     var body: some View {
         VStack(alignment: .leading) {
             Text("Your ID: \(viewModel.id)")
             HStack {
-                Text("Name:")
-                TextField("Type name", text: $viewModel.name)
+                Text("Name: ")
+                TextField("type name", text: $viewModel.name)
+                if viewModel.isFetchingData {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                }
             }
+            .padding()
+            .background(.quaternary)
+            .cornerRadius(10)
+            .disabled(viewModel.isFetchingData)
+
+            NavigationLink("Next View", value: RootView.Page.nextView)
         }
         .padding()
         .onAppear {
             viewModel.id = id
-            viewModel.name = name
-            viewModel.nameRepository = nameRepository
+            viewModel.userRepository = userRepository
+            viewModel.onAppear()
         }
     }
 }
@@ -107,18 +151,14 @@ struct ViewOne: View {
     (...)
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Text("Your ID: \(viewModel.id)")
-            HStack {
-                Text("Name:")
-                TextField("Type name", text: $viewModel.name)
-            }
-        }
+        VStack(alignment: .leading) { (...) }
         .padding()
         .onLoad {
             viewModel.id = id
-            viewModel.name = name
-            viewModel.nameRepository = nameRepository
+            viewModel.userRepository = userRepository
+        }
+        .onAppear {
+            viewModel.onAppear()
         }
     }
 }
@@ -139,12 +179,47 @@ class ViewTwoViewModel: ObservableObject {
     @Published var name = ""
 
     let id: String
-    let nameRepository: NameRepository
 
-    init(id: String, name: String, nameRepository: NameRepository) {
+    @Published private(set) var isFetchingData = false
+
+    private var currentTask: Task<Void, Error>?
+    private let userRepository: UserRepository
+
+    init(id: String, userRepository: UserRepository) {
         self.id = id
-        self.name = name
-        self.nameRepository = nameRepository
+        self.userRepository = userRepository
+    }
+
+    deinit {
+        currentTask?.cancel()
+    }
+
+    private func fetchUserData() {
+        guard !isFetchingData else { return }
+        isFetchingData = true
+        currentTask = Task { [weak self] in
+            do {
+                guard let id = self?.id,
+                      let repository = self?.userRepository
+                else { return }
+
+                let name = try await repository.fetchName(id: id)
+                self?.name = name
+            } catch {
+                print(error.localizedDescription)
+            }
+
+            self?.isFetchingData = false
+        }
+    }
+}
+
+// MARK: - Actions
+
+extension ViewTwoViewModel {
+
+    func onAppear() {
+        fetchUserData()
     }
 }
 ```
@@ -168,9 +243,22 @@ struct ViewTwo: View {
             HStack {
                 Text("Name: ")
                 TextField("type name", text: $viewModel.name)
+                if viewModel.isFetchingData {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                }
             }
+            .padding()
+            .background(.quaternary)
+            .cornerRadius(10)
+            .disabled(viewModel.isFetchingData)
+
+            NavigationLink("Next View", value: RootView.Page.nextView)
         }
         .padding()
+        .onAppear {
+            viewModel.onAppear()
+        }
     }
 }
 ```
@@ -181,7 +269,6 @@ The `View`'s call looks quite neat too and matches the declarative style:
 ViewTwo(
     viewModel: .init(
         id: "123",
-        name: "Tom",
         nameRepository: nameRepository
     )
 )
