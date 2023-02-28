@@ -280,6 +280,12 @@ It looks more clear than the previous one, however, also comes with limitations.
 
 That does not affect a reference type or the `Binding`.
 
+## `@StateObject` vs `@ObservedObject`
+
+To choose the right property wrapper it is important to know who owns a `ViewModel`.
+The examples above are using `@StateObject` because `ViewOne` and `ViewTwo` are the only owners. `@StateObject` calls it's closure after `View`'s load and keep closure's result until `View` deallocation. That makes `ViewModel` created only once.
+Using `@ObservedObject` with a `View` as an owner makes `ViewModel` recreating with every `View`'s redraw. `@ObservedObject` is a good choice as a child `ViewModel`, e.g. for table cell, where the child is held by the parent `ViewModel`.
+
 ## Conclusion
 
 Passing dependencies to `ViewModel`s in `SwiftUI` may look very difficult at the first sight, however, it could be easily manageable. It is important to take into consideration all limitations and a data type while passing to a `ViewModel`.
