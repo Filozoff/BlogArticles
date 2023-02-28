@@ -6,11 +6,11 @@ class ViewTwoViewModel: ObservableObject {
     @Published var name = ""
 
     let id: String
-    let userRepository: UserRepository
 
     @Published private(set) var isFetchingData = false
 
     private var currentTask: Task<Void, Error>?
+    private let userRepository: UserRepository
 
     init(id: String, userRepository: UserRepository) {
         print("\(Self.self): \(#function)")
