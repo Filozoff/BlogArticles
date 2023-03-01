@@ -269,7 +269,7 @@ The `View`'s call looks quite neat too and matches the declarative style:
 ViewTwo(
     viewModel: .init(
         id: "123",
-        nameRepository: nameRepository
+        userRepository: userRepository
     )
 )
 ```
