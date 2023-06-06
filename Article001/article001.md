@@ -276,6 +276,11 @@ ViewTwo(
 
 This option is based on [Q&A session notes from SwiftUI Lab at WWDC](https://www.swiftui-lab.com/random-lessons#data-10) (I strongly encourage checking the whole article) and [the discussion from Swift Forum](https://forums.swift.org/t/why-swiftui-state-property-can-be-initialized-inside-init-this-other-way/62772).
 
+EDIT:
+During the WWDC 2023 that topic was raised on WWDC's Slack channel by @Tudor-Mihai and answered by Apple employee:
+![Screenshot of Apple employee answer](Resources/wwdc2023_swiftui.png)
+
+
 It looks more clear than the previous one, however, also comes with limitations. In the case of passing a value type, bear in mind that its mutation does not update the `View` as it is taken only once. Make sure the passed value type is up to date.
 
 That does not affect a reference type or the `Binding`.
