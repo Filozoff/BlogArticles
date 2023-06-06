@@ -280,6 +280,8 @@ EDIT:
 During the WWDC 2023 that topic was raised on WWDC's Slack channel by @Tudor-Mihai and answered by Apple employee:
 ![Screenshot of Apple employee answer](Resources/wwdc2023_swiftui.png)
 
+For `@Observable` macro and `@State` introduced at WWDC 2023 it looks the same:
+![Screenshot of Apple employee answer on constructor injection while using @Observable macro](Resources/wwdc2023_swiftui_1.png)
 
 It looks more clear than the previous one, however, also comes with limitations. In the case of passing a value type, bear in mind that its mutation does not update the `View` as it is taken only once. Make sure the passed value type is up to date.
 
