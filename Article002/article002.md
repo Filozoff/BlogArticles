@@ -4,7 +4,7 @@
 
 ## What are accessibility identifiers?
 
-Shortly, they are a way of locating an element in an iOS app. They can be used to uniquely and reliably identify an element (`XCUIElement`) in UI Automation (`XCUITests`). The alternatives have either a low performance (`XPath`) or require specific selectors which may randomly fail to find an element. Still, it may be useful to know them. To learn about other options, check [the guide from BrowserStack](https://www.browserstack.com/guide/xcuitest-locators-to-find-elements) about finding elements.
+Shortly, they are a way of locating an element in an iOS app. They can be used to uniquely and reliably identify an element (`XCUIElement`) in UI Automation Tests (`XCUITests`). The alternatives have either a low performance (`XPath`) or require specific selectors which may randomly fail to find an element. Still, it may be useful to know them. To learn about other options, check [the guide from BrowserStack](https://www.browserstack.com/guide/xcuitest-locators-to-find-elements) about finding elements.
 
 For more information about accessibility identifiers, please visit [Apple's documentation](https://developer.apple.com/documentation/appkit/nsaccessibility/1535023-accessibilityidentifier).
 
@@ -18,19 +18,19 @@ To easily verify them, the best way is to use a views hierarchy preview provided
 
 The Accessibility Inspector is a tool provided with Xcode. It can be opened from Xcode's menu: Xcode -> Open Developer Tool -> Accessibility Inspector or cmd+space and type "accessibility inspector".
 
-While the app is running on the simulator, in "Accessibility Inspector" choose "Simulator" from "All processes", then click on the "Target an element" button (1). The "selection mode" will be turned on. Click on the element which you would like to inspect (green overlay will assist with choosing the right one). The accessibility identifier is under "Identifier" in the "Advanced" section (2). Below is an example of Health.app:
+While the app is running on the simulator, from "All processes" in "Accessibility Inspector", choose "Simulator", and then click on the "Target an element" button (1). The "selection mode" will be turned on. Click on the element which you would like to inspect (green overlay will assist with choosing the right one). The accessibility identifier is under "Identifier" in the "Advanced" section (2). Below is an example of Health.app:
 
 ![Health.app accessibility identifier preview](Resources/accessibility_inspector.png)
 
-Accessibility Inspector offers amazing tools which help you improve the accessibility of your app (e.g. contrast ratio scans). To learn more about Accessibility Inspector and its features, please, watch a [WWDC session from 2019](https://developer.apple.com/videos/play/wwdc2019/257).
+Accessibility Inspector comes with amazing tools which help you improve the accessibility of your app (e.g. contrast ratio scans). To learn more about Accessibility Inspector and its features, please, watch a [WWDC session from 2019](https://developer.apple.com/videos/play/wwdc2019/257).
 
 ### Appium Inspector
 
-Appium Inspector requires more work to set up but in the end, it is more convenient to use and provide data in readable form.
+Appium Inspector requires more work to set up but in the end, it is more convenient to use for accessibility preview and provide data in readable form.
 
 #### Installation
 
-There are several tutorials on the internet about how to install Appium Inspector, but if would like to not spent your time for looking, feel free to use the one below:
+There are several tutorials on the internet about how to install Appium Inspector, but if would like not to spend so much of your time for looking, feel free to use the one below:
 
 Appium Inspector requires `npm` and Appium Server. The simplest way is to install it through [homebrew](https://brew.sh) by typing these commands in the terminal:
 
@@ -42,7 +42,7 @@ brew install node # installs npm
 npm install -g appium@next # installs appium server through npm
 ```
 
-You may check the Appium installation by typing:
+You may check the Appium installation by printing its version. You can do it by typing in the terminal:
 
 ```bash
 appium -v
@@ -54,7 +54,7 @@ To run `XCUITests` or scan the tree structure, Appium needs an additional driver
 appium driver install xcuitest # installs Appium driver which allows to run XCUITest
 ```
 
-You may check if the driver is successfully installed by listing down installed drivers. You can do that by typing in temrinal:
+You may check if the driver is successfully installed by listing down installed drivers. You can do that by typing in the terminal:
 
 ```bash
 appium driver list --installed
@@ -80,7 +80,7 @@ You can save that configuration (it is not saved by default) for later use. To s
 
 To know more about available options (like running on a physical device), please visit the [Appium's guide](https://appium.io/docs/en/2.0/guides/caps/).
 
-Click on the element which you would like to inspect (an overlay will assist with choosing the right one). Below is an example of Health.app (with the same screen and identifier which was used in a previous example above):
+Click on the element which you would like to inspect (an overlay will assist with choosing the right one). Below is the example of Health.app (with the same screen and identifier used in the previous example above):
 
 ![Health.app accessibility identifier preview](Resources/appium_inspector_identifier.png)
 
@@ -98,12 +98,12 @@ Take a look at the identifier from Health.app: `UIA.Health.ReviewHealthChecklist
 
 As you may notice, a tree structure has the following key advantages:
 
-- it allows a better identifier organization;
-- each nesting level provides more detail about the view placement;
+- it allows better identifier organization;
+- each nesting level provides more detail about the view placement, so it is easier to find it in view hierarchy;
 
-The example above is constructed by using the following format: `Purpose.App.ViewGroup.Component.Element`, but feel free to define your own (e.g. `ScreenName.ViewGroup.Component.Element`).
+The example of Apple's Health app is constructed by using the following format: `Purpose.App.ViewGroup.Component.Element`, but feel free to define your own (e.g. it is absolutely fine to use `ScreenName.ViewGroup.Component.Element` instead).
 
-It can be done by passing the identifier through a constructor like this:
+Composing indetifiers can be done by simply passing the identifier through a constructor like this:
 
 ```swift
 struct UserDetails: View {
@@ -116,7 +116,10 @@ struct UserDetails: View {
         self.parentIdentifier = parentIdentifier
     }
 
-    (...)
+    var body: some View {
+        Text(name)
+            .accessibilityIdentifier("\(parentIdentifier).xLabel")
+    }
 }
 ```
 
@@ -141,7 +144,7 @@ extension EnvironmentValues {
 }
 ```
 
-That environment value will be used to pass a branch name from the parent `View`, to its children.
+That environment value will be used to pass a branch name from the parent `View`, to its children. Once set to a parent, it is visible to all its childern views.
 
 Next, let's create a dedicated `ViewModifier` for constructing a branch and a leaf.
 
@@ -213,7 +216,7 @@ public extension View {
 }
 ```
 
-The leaf modifier applies the identifier to a `View`. You have may noticed, that the `parentAccessibilityBranch` environment value is nullified for the leaf modifier. It prevents further branching creation because is not feasible to grow a branch from a leaf. The leaf modifier closes the identifier creation.
+The leaf modifier applies the identifier to a `View`. You have may noticed, that the `parentAccessibilityBranch` environment value is nullified for the leaf modifier. It prevents further branching creation, because is not feasible to grow a branch from a leaf. The leaf modifier closes the identifier creation.
 
 While having all implementation done, let's create an example of a reusable `View`:
 
