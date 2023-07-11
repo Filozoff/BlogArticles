@@ -4,21 +4,21 @@
 
 ## What are accessibility identifiers?
 
-Shortly, they are a way of locating an element in an iOS app. They can be used to uniquely and reliably identify an element (`XCUIElement`) in UI Automation Tests (`XCUITests`). The alternatives have either a low performance (`XPath`) or require specific selectors which may randomly fail to find an element. Still, it may be useful to know them. To learn about other options, check [the guide from BrowserStack](https://www.browserstack.com/guide/xcuitest-locators-to-find-elements) about finding elements.
+They are a way to reliably identify an element (`XCUIElement`) in UI Automation Tests (`XCUITests`). The alternatives have either a low performance (`XPath`) or require specific selectors which may randomly fail. Still, it may be useful to know them. To learn about other options, check [the guide from BrowserStack](https://www.browserstack.com/guide/xcuitest-locators-to-find-elements) about finding elements.
 
 For more information about accessibility identifiers, please visit [Apple's documentation](https://developer.apple.com/documentation/appkit/nsaccessibility/1535023-accessibilityidentifier).
 
-To easily verify them, the best way is to use a views hierarchy preview provided by inspector tools.
+To easily verify them, the best way is to use a view hierarchy preview, provided by inspector tools.
 
 ## Previewing `XCUIElement`s structure
 
-`XCUIElement`s have, the same as views, a tree structure. They are the two most known ways to preview them.
+`XCUIElement`s are tree-structured, the same as views. There are two most known ways to preview them.
 
 ### Accessibility Inspector
 
-The Accessibility Inspector is a tool provided with Xcode. It can be opened from Xcode's menu: Xcode -> Open Developer Tool -> Accessibility Inspector or cmd+space and type "accessibility inspector".
+The Accessibility Inspector is a tool provided with Xcode. It can be opened from Xcode's menu: Xcode -> Open Developer Tool -> Accessibility Inspector or cmd+space and typing "accessibility inspector".
 
-While the app is running on the simulator, from "All processes" in "Accessibility Inspector", choose "Simulator", and then click on the "Target an element" button (1). The "selection mode" will be turned on. Click on the element which you would like to inspect (green overlay will assist with choosing the right one). The accessibility identifier is under "Identifier" in the "Advanced" section (2). Below is an example of Health.app:
+While the app is running on the simulator, from "All processes" in "Accessibility Inspector", choose "Simulator", and then click on the "Target an element" button (1). The "selection mode" will be enabled. Click on the element which you would like to inspect (green overlay will assist with choosing the right one). The accessibility identifier is under "Identifier" in the "Advanced" section (2). Below is an example of Health.app:
 
 ![Health.app accessibility identifier preview](Resources/accessibility_inspector.png)
 
@@ -26,11 +26,11 @@ Accessibility Inspector comes with amazing tools which help you improve the acce
 
 ### Appium Inspector
 
-Appium Inspector requires more work to set up but in the end, it is more convenient to use for accessibility preview and provide data in readable form.
+Appium Inspector requires more work to set up but in the end, it is more convenient to use for accessibility identifier preview and provides data in readable form.
 
 #### Installation
 
-There are several tutorials on the internet about how to install Appium Inspector, but if would like not to spend so much of your time for looking, feel free to use the one below:
+There are several tutorials on the Internet about how to install Appium Inspector, but if you would like to save some time, feel free to use the one below:
 
 Appium Inspector requires `npm` and Appium Server. The simplest way is to install it through [homebrew](https://brew.sh) by typing these commands in the terminal:
 
@@ -78,9 +78,9 @@ Then, open the Appium Inspector app and define properties (1). You have to defin
 You can save that configuration (it is not saved by default) for later use. To start a screen scanning process, click the "Start Session" button (2).
 ![Appium Inspector setup](Resources/appium_inspector_setup.png)
 
-To know more about available options (like running on a physical device), please visit the [Appium's guide](https://appium.io/docs/en/2.0/guides/caps/).
+To learn more about available options (like running on a physical device), please visit [Appium's guide](https://appium.io/docs/en/2.0/guides/caps/).
 
-Click on the element which you would like to inspect (an overlay will assist with choosing the right one). Below is the example of Health.app (with the same screen and identifier used in the previous example above):
+Click on the element which you would like to inspect (an overlay will assist with choosing the right one). Below is an example of Health.app (with the same screen and identifier used in the previous example above):
 
 ![Health.app accessibility identifier preview](Resources/appium_inspector_identifier.png)
 
@@ -99,11 +99,11 @@ Take a look at the identifier from Health.app: `UIA.Health.ReviewHealthChecklist
 As you may notice, a tree structure has the following key advantages:
 
 - it allows better identifier organization;
-- each nesting level provides more detail about the view placement, so it is easier to find it in view hierarchy;
+- each nesting level provides more detail about the view placement, so it is easier to find it in a view hierarchy;
 
 The example of Apple's Health app is constructed by using the following format: `Purpose.App.ViewGroup.Component.Element`, but feel free to define your own (e.g. it is absolutely fine to use `ScreenName.ViewGroup.Component.Element` instead).
 
-Composing indetifiers can be done by simply passing the identifier through a constructor like this:
+Composing identifiers can be done by simply passing the identifier through a constructor like this:
 
 ```swift
 struct UserDetails: View {
@@ -123,7 +123,7 @@ struct UserDetails: View {
 }
 ```
 
-However, it is not enough flexible. First, it introduces an additional dependency passed through the constructor, polluting its API with UI-related dependency. Second, you are losing an option to set an "identifier branch" to regular `SwiftUI` view containers, like `VStack`. The best option would be to allow an identifier to be created in the same way as setting up the background color or padding to a `View` or a group of them.
+However, it is not flexible enough. First, it introduces an additional dependency passed through the constructor, polluting its API with UI-related dependency. Second, you are losing an option to set an "identifier branch" to regular `SwiftUI` view containers, like `VStack`. The best option would be to allow an identifier to be created in the same way as setting up the background color or adding padding to a `View` or a group of them.
 
 To achieve that, we are going to use custom `EnvironmentKey` and `ViewModifier`s, starting with creating a dedicated `EnvironmentKey`:
 
@@ -144,7 +144,7 @@ extension EnvironmentValues {
 }
 ```
 
-That environment value will be used to pass a branch name from the parent `View`, to its children. Once set to a parent, it is visible to all its childern views.
+That environment value will be used to pass a branch name from the parent `View`, to its children. Once set to a parent, it is visible to all its child views.
 
 Next, let's create a dedicated `ViewModifier` for constructing a branch and a leaf.
 
@@ -216,9 +216,9 @@ public extension View {
 }
 ```
 
-The leaf modifier applies the identifier to a `View`. You have may noticed, that the `parentAccessibilityBranch` environment value is nullified for the leaf modifier. It prevents further branching creation, because is not feasible to grow a branch from a leaf. The leaf modifier closes the identifier creation.
+The leaf modifier applies the identifier to a `View`. You may have noticed, that the `parentAccessibilityBranch` environment value is nullified for the leaf modifier. It prevents further branching creation because it is not feasible to grow a branch from a leaf. The leaf modifier closes the identifier creation.
 
-While having all implementation done, let's create an example of a reusable `View`:
+Once the implementation is done, let's create an example of a reusable `View`:
 
 ```swift
 struct UserDetails: View {
@@ -275,7 +275,7 @@ As a result of the above, let's take a look at the preview to verify the identif
 
 ## Conclusion
 
-Setting up accessibility identifiers with custom SwiftUI components can be flexible without introducing an additional element to the `View`s constructor. SwiftUI provides an API that allows composing identifiers with the same feel as modifying a `View` with padding, background, and foreground color.
+Setting up accessibility identifiers with custom SwiftUI components can be flexible without introducing an additional element to the `View`s constructor. SwiftUI provides an API that allows composing identifiers with the same ergonomics as modifying a `View` with padding, background, and foreground color.
 
 Although the solution above is flexible, bear in mind to build the identifier tree with caution, to prevent introducing frequent changes which may break the UI tests.
 
