@@ -4,13 +4,13 @@
 
 ## What are accessibility identifiers and what they are for?
 
-Accessibility identifiers can be used to reliably distinct an element (`XCUIElement`) in UI Automation Tests (`XCUITests`). The alternatives have either a low performance (`XPath`) or require specific selectors which may randomly fail. Still, it may be useful to know them. To learn about other options, check [the guide from BrowserStack](https://www.browserstack.com/guide/xcuitest-locators-to-find-elements) about finding elements.
+Accessibility identifiers can be used to reliably distinct an element (`XCUIElement`) in UI automated tests (`XCUITests`). The alternatives have either a low performance (`XPath`) or require specific selectors which may randomly fail. Still, it may be useful to know them. To learn about other options, check [the guide from BrowserStack](https://www.browserstack.com/guide/xcuitest-locators-to-find-elements) about finding elements.
 
 For more information about accessibility identifiers, please visit [Apple's documentation](https://developer.apple.com/documentation/appkit/nsaccessibility/1535023-accessibilityidentifier).
 
 ## How to verify them?
 
-The best way is to preview `XCUIElement`s, by using inspector tools. `XCUIElement`s are tree-structured, the same as views. There are two most known ways to preview them.
+The best way is to preview `XCUIElement`s, by using inspector tools. `XCUIElement`s are tree-structured, the same as views. There are two well known ways to preview them.
 
 ### Accessibility Inspector
 
