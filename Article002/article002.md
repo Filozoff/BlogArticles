@@ -2,17 +2,15 @@
 
 # Composing Accessibility Identifiers for SwiftUI Components
 
-## What are accessibility identifiers?
+## What are accessibility identifiers and what they are for?
 
-They are a way to reliably identify an element (`XCUIElement`) in UI Automation Tests (`XCUITests`). The alternatives have either a low performance (`XPath`) or require specific selectors which may randomly fail. Still, it may be useful to know them. To learn about other options, check [the guide from BrowserStack](https://www.browserstack.com/guide/xcuitest-locators-to-find-elements) about finding elements.
+Accessibility identifiers can be used to reliably distinct an element (`XCUIElement`) in UI Automation Tests (`XCUITests`). The alternatives have either a low performance (`XPath`) or require specific selectors which may randomly fail. Still, it may be useful to know them. To learn about other options, check [the guide from BrowserStack](https://www.browserstack.com/guide/xcuitest-locators-to-find-elements) about finding elements.
 
 For more information about accessibility identifiers, please visit [Apple's documentation](https://developer.apple.com/documentation/appkit/nsaccessibility/1535023-accessibilityidentifier).
 
-To easily verify them, the best way is to use a view hierarchy preview, provided by inspector tools.
+## How to verify them?
 
-## Previewing `XCUIElement`s structure
-
-`XCUIElement`s are tree-structured, the same as views. There are two most known ways to preview them.
+The best way is to preview `XCUIElement`s, by using inspector tools. `XCUIElement`s are tree-structured, the same as views. There are two most known ways to preview them.
 
 ### Accessibility Inspector
 
@@ -30,7 +28,7 @@ Appium Inspector requires more work to set up but in the end, it is more conveni
 
 #### Installation
 
-There are several tutorials on the Internet about how to install Appium Inspector, but if you would like to save some time, feel free to use the one below:
+There are several tutorials on the Internet on how to install Appium Inspector, but if you would like to save some time, feel free to use the one below:
 
 Appium Inspector requires `npm` and Appium Server. The simplest way is to install it through [homebrew](https://brew.sh) by typing these commands in the terminal:
 
