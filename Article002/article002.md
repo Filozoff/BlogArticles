@@ -116,7 +116,7 @@ struct UserDetails: View {
 
     var body: some View {
         Text(name)
-            .accessibilityIdentifier("\(parentIdentifier).xLabel")
+            .accessibilityIdentifier("\(parentIdentifier).Label")
     }
 }
 ```
