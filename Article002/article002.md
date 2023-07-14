@@ -121,7 +121,7 @@ struct UserDetails: View {
 }
 ```
 
-However, it is not flexible enough. First, it introduces an additional dependency passed through the constructor, polluting its API with UI-related dependency. Second, you are losing an option to set an "identifier branch" to regular `SwiftUI` view containers, like `VStack`. The best option would be to allow an identifier to be created in the same way as setting up the background color or adding padding to a `View` or a group of them.
+However, it is not flexible enough. First, it introduces an additional dependency passed through the constructor, polluting its API with UI-related dependency. Second, you are losing an option to set an "identifier branch" to regular `SwiftUI` view containers, like `VStack`. The best option would be to allow an identifier to be created in the same way as setting up a background color or adding padding to a `View` or a group of them.
 
 To achieve that, we are going to use custom `EnvironmentKey` and `ViewModifier`s, starting with creating a dedicated `EnvironmentKey`:
 
