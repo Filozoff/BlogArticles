@@ -1,64 +1,69 @@
 #!/usr/bin/env bash
 
 set -Eeuo pipefail
+trap 'error_handler ${FUNCNAME-main context} ${LINENO} $?' ERR
 
 # CONSTANTS
 
 readonly CALL_DIR="$PWD"
-readonly SWIFT_BUILD_DIR=".build"
 readonly SCRIPT_NAME=$(basename -s ".sh" "$0")
+readonly TEMP_DIRECTORY="tmp$RANDOM"
 
 # FUNCTIONS
 
+function error_handler() {
+    echo "$SCRIPT_NAME.sh: in '$1()', line $2: error: $3"
+    reset
+    exit 1
+}
+
+function reset() {
+    cd "$CALL_DIR"
+    rm -rf "$TEMP_DIRECTORY" > /dev/null
+}
+
+# Extract package name from Package.swift
+function swift_package_name() {
+    swift package describe --type json | jq -r .name
+}
+
 # Scans git history, starting from active branch HEAD, to find latest pushed tag version.
 # Version has to be represented in plain semver format, e.g. '1.0.1'.
-# Modify regex for different version patter scan.
+# Modify regex for different version pattern scan.
 function get_current_version_tag_name() {
     local current_branch_name
     local last_reference_tag_name
 
-    current_branch_name=$(git rev-parse -abbrev-ref HEAD)
-    last_reference_tag_name=$(git tag -merged="$current_branch_name" --list --sort=-version:refname "[0-9]*.[0-9]*.[0-9]*" | head -n 1)
+    current_branch_name=$(git rev-parse --abbrev-ref HEAD)
+    last_reference_tag_name=$(git tag --merged="$current_branch_name" --list --sort=-version:refname "[0-9]*.[0-9]*.[0-9]*" | head -n 1)
     cat <<< "$last_reference_tag_name"
 }
 
 function build_public_interface() {
-    local target
-    target=$(get_target)
-
-    # Generic target 'ios-arm64-simulator' is not working properly for Xcode 15 and swift 5.9.
-    # Runs build and check the output for potential errors.
-    swift build \
-        -Xswiftc=-sdk \
-        -Xswiftc="$(xcrun —-sdk iphonesimulator --show-sdk-path)" \
-        -Xswiftc=-target \
-        -Xswiftc="$target" \
-        -Xswiftc=-enable-library-evolution \
-        -Xswiftc=-no-verify-emitted-module-interface \
-        --enable-parseable-module-interfaces \
-        > /dev/null
+    xcodebuild \
+        -archivePath "$ARCHIVE_PATH" \
+        -derivedDataPath "$DERIVED_DATA_PATH" \
+        -destination "$DESTINATION" \
+        -scheme "$SCHEME" \
+        BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+        SKIP_INSTALL=NO \
+        OTHER_SWIFT_FLAGS="-no-verify-emitted-module-interface" \
+        archive | xcbeautify
 }
 
 function get_public_interface() {
     local package_name
     local public_interface_directory
 
-    if ! { error=$(build_public_interface 2>&1); } 3>&1; then
-        echoerr "Cannot complete the build due to compile errors. Please, run 'swift build' with params described inside 'build public interface' function in '$SCRIPT_NAME' file"
-        echoerr "$error"
-        restore_changes
+    if ! { error=$(build_public_interface 2>&1); }; then
+        echo "$error"
+        echo "Cannot complete the build due to the compile error. Check logs above."
         exit 1
     fi
 
     package_name=$(swift_package_name)
-    public_interface_directory=$(find "./$SWIFT_BUILD_DIR/" -name "${package_name}.swiftinterface")
-    cat <<< "$(car "$public_interface_directory")"
-}
-
-function get_target() {
-    local latest_supported_simulator_versions
-    latest_supported_simulator_versions=$(xcrun simctl -list | grep -Eo "*iOS [0-9.]{3,}" | grep -Eo "[0-9.]{3,}" | sort -Vru | head -n 1)
-    cat <<< "arm64-apple-ios${latest_supported_simulator_versions}-simulator"
+    public_interface_directory=$(find "./$DERIVED_DATA_PATH/" -name "${package_name}.swiftinterface")
+    cat <<<"$(cat "$public_interface_directory")"
 }
 
 function main() {
@@ -67,46 +72,44 @@ function main() {
     local current_public_interface_path
     local has_breaking_changes
     local has_additive_changes
+    local normalized_derived_data_path
+    local normalized_temp_dir
     local temp_diff_directory
-    local temp_directory
     local temp_version_directory
     local version_public_interface
     local version_public_interface_path
     local version_tag
 
-    local -r semantic_version_regex='([0-9]+).([0-9]+).([0-9]+)*'
+    local -r semantic_version_regex='([0-9]+).([0-9]+).([0-9]+)'
 
     current_branch_name=$(git rev-parse --abbrev-ref HEAD)
     version_tag=$(get_current_version_tag_name)
 
-    temp_directory="./tmp" # It's better to have a tmp directory inside the project as even in case of script failure, it will not junk '/tmp'.
-    temp_diff_directory="$temp_directory/diff"
-    temp_version_directory="$temp_directory/version"
+    normalized_temp_dir=$(echo "$TEMP_DIRECTORY" | sed 's/^\.\///')
+    normalized_derived_data_path=$(echo "$DERIVED_DATA_PATH" | sed 's/^\.\///')
 
-    # Clean-up ./.build hidden folder to prevent of usage any cached files.
-    rm -rf "$SWIFT_BUILD_DIR"
+    temp_diff_directory="$TEMP_DIRECTORY/diff"
+    temp_version_directory="$TEMP_DIRECTORY/version"
 
-    # Copy change tagged with given version tag to 'tmp' directory.
-    git checkout "tags/$version_tag" -—force --quiet
-    git checkout-index \
-        --all \
-        —-force \
-        -—prefix="$temp_version_directory/"
+    # Clean up derived data directory to prevent usage of any cached files
+    rm -rf "$DERIVED_DATA_PATH"
 
-    git checkout -—quiet
+    # Copy change tagged with given version tag to 'tmp/version' directory
+    git clone "$CALL_DIR" --branch "$version_tag" --single-branch "$temp_version_directory" --quiet --recurse-submodules -c advice.detachedHead=false
 
-    # Get public interface for the previous change.
+    # Get public interface from the previous change
     cd "$temp_version_directory"
     version_public_interface=$(get_public_interface)
-    cd "$CALL_DIR"
 
-    # Get public interface for the current change
+    # Go back to the project root.
+    # Get public interface from the current change
+    cd "$CALL_DIR"
     current_public_interface=$(get_public_interface)
 
-    # Save public interface
+    # Save public interfaces
     mkdir -p "$temp_diff_directory"
-    version_public_interface_path=$"$temp_diff_directory/version.swiftinterface"
-    current_public_interface_path=$"$temp_diff_directory/current.swiftinterface"
+    version_public_interface_path="$temp_diff_directory/version.swiftinterface"
+    current_public_interface_path="$temp_diff_directory/current.swiftinterface"
 
     # Save public API outputs without comments
     echo "$version_public_interface" | grep --invert-match '^//' > "$version_public_interface_path"
@@ -138,26 +141,37 @@ function main() {
         cat <<< "${major}.${minor}.${patch}"
     fi
 
-    rm -rf "$temp_directory"
-}
-
-function restore_changes() {
-    echo "Restoring to current branch..."
-    git checkout "$current_branch_name" --force --quiet
-    echo "Branch restored."
+    # Cleanup
+    reset
 }
 
 # ENTRY POINT
 
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -h|--help)
-            help
-            exit 0
+        # Device for which public interface is created. Use value supported by `-destination` argument in `xcodebuild archive`.
+        # E.g. `platform=iOS Simulator,name=iPhone 14,OS=17.0`.
+        -d|--device)
+            DESTINATION=${2}
+            shift 2
+        ;;
+        # Derived data path (optional).
+        -r|--derived-data-path)
+            DERIVED_DATA_PATH=${2}
+            ARCHIVE_PATH="$DERIVED_DATA_PATH/archive"
+            shift 2
+        ;;
+        # Package scheme name. For packages with multiple targets, it may be required to add `-Package` suffix.
+        # Example: your package is named `ClientService` and has two targets inside: `ClientServiceDTOs` and `ClientServiceAPI`.
+        # Then, your target would be `ClientService-Package`.
+        -s|--scheme)
+            SCHEME=${2}
+            shift 2
         ;;
         *)
-            echoerr "${ERROR_MSG_HELP}. Unknown parameter: '${1}'."
+            echo "Unknown parameter: '${1}'."
             exit 1
+        ;;
     esac
 done
 
