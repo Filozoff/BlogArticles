@@ -4,24 +4,29 @@
 
 *(This article assumes you have basic knowledge of shell scripts)*
 
-When multiple developers work on the same library, whether it's an in-house or public project, tracking changes and their impact becomes increasingly challenging. Even for a single developer, there's a risk of introducing breaking changes without properly marking them with a major version bump.
+## The challenge of cersion management
 
-Automating this process can help prevent potential mistakes, either by fully implementing automated versioning or by verifying manually proposed versions.
+Managing versions in a shared library can be a daunting task. Whether you're working on an in-house project or maintaining a public package, keeping track of changes and their impact becomes increasingly complex as the project grows. Even for solo developers, there's a significant risk of introducing breaking changes without properly marking them with a major version bump.
 
-## How is Swift Package Manager version represented?
+## The solution: automated versioning
+
+This article presents a practical solution to this challenge through automation. We'll explore how to either fully automate the versioning process or verify manually proposed versions, ensuring consistent and correct semantic versioning across your Swift packages.
+
+## Understanding Swift Package Manager versioning
 
 Swift Package Manager (SPM) uses [Semantic Versioning](https://semver.org) (semver). While Semantic Versioning supports suffixes (like `1.0.1-alpha`), SPM works best with the "version core" only (e.g., `1.0.1`). Tagging changes with just the version core enables library consumers to reliably use SPM's `.upToNextMinor(from:)` and `.upToNextMajor(from:)` to specify supported versions.
 
 ## How it can be achieved?
 
-Let's break it down into steps:
-- **Compare two API states**: Extract the public interface from both the latest tagged version and the current codebase
-- **Analyze the differences**: Identify what has been added, modified, or removed in the public API
-- **Apply semantic versioning rules**: Based on the type of changes detected, determine whether the next version should be:
-  - **Patch** (x.x.Z) - for bug fixes and internal changes that don't affect the public API
-  - **Minor** (x.Y.x) - for new features that are backward compatible
-  - **Major** (X.x.x) - for breaking changes that require consumer code updates
-- **Propose the version**: Generate the next appropriate version number following semantic versioning principles
+Let's break down our automation approach into clear, manageable steps:
+
+1. **Compare API states**: We'll extract the public interface from both the latest tagged version and the current codebase
+2. **Analyze differences**: We'll identify what has been added, modified, or removed in the public API
+3. **Apply versioning rules**: Based on the changes detected, we'll determine the appropriate version bump:
+   - **Patch** (x.x.Z) - for bug fixes and internal changes that don't affect the public API
+   - **Minor** (x.Y.x) - for new features that are backward compatible
+   - **Major** (X.x.x) - for breaking changes that require consumer code updates
+4. **Propose version**: We'll generate the next appropriate version number following semantic versioning principles
 
 ### Script foundation and argument parsing
 
@@ -299,7 +304,7 @@ Finally, clean up the temporary directory to avoid leaving behind artifacts:
 reset
 ```
 
-## Examples of usage
+## Practical usage examples
 
 The script above can be used to create a tag with every successful merge into the default branch (`main`/`master`). Here's a complete usage example:
 
@@ -318,17 +323,16 @@ git push origin "$NEXT_VERSION"
 
 ## Conclusion
 
-By combining tools built into either `swift` or `xcodebuild` with shell scripting, we can automate next version proposals. This approach can be used for creating tags or repository release objects with confidence that semantic versioning rules are properly followed.
+By combining Swift's built-in tools with shell scripting, we've created a solution for automating version proposals. This approach ensures consistent versioning practices and reduces human error in version management.
 
-The automated approach reduces human error in version management and ensures consistent versioning practices across development teams.
+The complete code for this article is available in [my GitHub repository](https://github.com/Filozoff/BlogArticles/tree/master/Article003).
 
-You may find the complete code for this article in [my GitHub repository](https://github.com/Filozoff/BlogArticles/tree/master/Article003).
+## Future improvements
 
-## Further steps
+While described current solution provides a solid foundation, there are several areas where it could be enhanced:
 
-The code discussed in this article provides a foundation that can be improved in several areas:
-- **Dependency analysis**: Scan `Package.swift` for dependency version changes that might affect compatibility
-- **Macro support**: Enhanced breaking change detection for packages with macro targets, as macro-generated code might not be captured in standard interface files
-- **Custom API analysis**: More sophisticated parsing for complex API changes that might not be obvious from simple diff analysis
+1. **Dependency analysis**: Implement scanning of `Package.swift` for dependency version changes that might affect compatibility
+2. **Package mutliple target support**: This solution works well for one-target Swift packages. It can be improved to scan all targets within provided `scheme` and do diffing for all public interface files
+3. **Custom API Analysis**: Develop more sophisticated parsing for complex API changes
 
 For GitHub users, instead of implementing this from scratch, consider using a ready-made action from my repository: [Filozoff/action-swift-propose-next-version](https://github.com/Filozoff/action-swift-propose-next-version). You can see [a live example of its usage](https://github.com/Filozoff/XCTestExtension/blob/master/.github/workflows/ci.yml) in my library.
