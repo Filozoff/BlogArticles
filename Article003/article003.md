@@ -2,16 +2,15 @@
 
 # Versioning automation for Swift Packages
 
-*(This article assumes you have shell scripts basic knowledge)*
+*(This article assumes you have basic knowledge of shell scripts)*
 
-When having several developers working on the same library, no matter if it is in-house or public one, it starts to get very difficult to track all changes and their impact.
-Even for one developer, there is a chance of introducing a breaking change marked with a non-major version bump.
+When multiple developers work on the same library, whether it's an in-house or public project, tracking changes and their impact becomes increasingly challenging. Even for a single developer, there's a risk of introducing breaking changes without properly marking them with a major version bump.
 
-The automation of the process may help to prevent potential mistakes, either by fully applying the automated version or as a verification check to the manually proposed one.
+Automating this process can help prevent potential mistakes, either by fully implementing automated versioning or by verifying manually proposed versions.
 
-## How Swift Package Manager version is represented?
+## How is Swift Package Manager version represented?
 
-Swift Package Manager (SPM) uses [Semantic Versioning](https://semver.org) (semver). Although Semantic Versioning supports suffixes (like `1.0.1-alpha`), SPM works best with "version core" only (e.g. `1.0.1`). Tagging changes with just a version core allows library consumers to use SPM's `.upToNextMinor(from:)` and `.upToNextMajor(from:)` reliably to specify supported versions.
+Swift Package Manager (SPM) uses [Semantic Versioning](https://semver.org) (semver). While Semantic Versioning supports suffixes (like `1.0.1-alpha`), SPM works best with the "version core" only (e.g., `1.0.1`). Tagging changes with just the version core enables library consumers to reliably use SPM's `.upToNextMinor(from:)` and `.upToNextMajor(from:)` to specify supported versions.
 
 ## How it can be achieved?
 
@@ -319,7 +318,7 @@ git push origin "$NEXT_VERSION"
 
 ## Conclusion
 
-With tools built into either `swift` or `xcodebuild` combined with shell scripting, we can automate next version propositions. This can be used for creating tags or repository release objects with confidence that semantic versioning rules are properly followed.
+By combining tools built into either `swift` or `xcodebuild` with shell scripting, we can automate next version proposals. This approach can be used for creating tags or repository release objects with confidence that semantic versioning rules are properly followed.
 
 The automated approach reduces human error in version management and ensures consistent versioning practices across development teams.
 
@@ -327,7 +326,7 @@ You may find the complete code for this article in [my GitHub repository](https:
 
 ## Further steps
 
-The code discussed in this article is a foundation that can be improved in several areas:
+The code discussed in this article provides a foundation that can be improved in several areas:
 - **Dependency analysis**: Scan `Package.swift` for dependency version changes that might affect compatibility
 - **Macro support**: Enhanced breaking change detection for packages with macro targets, as macro-generated code might not be captured in standard interface files
 - **Custom API analysis**: More sophisticated parsing for complex API changes that might not be obvious from simple diff analysis
