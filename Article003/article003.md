@@ -335,6 +335,8 @@ While described current solution provides a solid foundation, there are several 
 
 1. **Dependency analysis**: Implement scanning of `Package.swift` for dependency version changes that might affect compatibility
 2. **Package mutliple target support**: This solution works well for one-target Swift packages. It can be improved to scan all targets within provided `scheme` and do diffing for all public interface files
-3. **Custom API Analysis**: Develop more sophisticated parsing for complex API changes
+3. **Custom API Analysis**: Develop more sophisticated parsing for complex API changes, like treating new parameter with default value inside a method or enum as non-breaking change
+4. **Beta releases support**: The discussed script handles versioning for mature packages, where breaking changes bump the `MAJOR` version. For beta releases, breaking changes would bump the `MINOR` version instead
+5. **Multiple device support**: Some packages have platform-specific APIs for Linux or macOS. The current example requires developers to run the script individually for each supported platform and compare the resulting versions
 
 For GitHub users, instead of implementing this from scratch, consider using a ready-made action from my repository: [Filozoff/action-swift-propose-next-version](https://github.com/Filozoff/action-swift-propose-next-version). You can see [a live example of its usage](https://github.com/Filozoff/XCTestExtension/blob/master/.github/workflows/ci.yml) in my library.
