@@ -57,10 +57,10 @@ function get_public_interface() {
     local build_output
 
     if ! build_output=$(build_public_interface 2>&1); then
-        echo "❌ Build failed. Error details:"
-        echo "$build_output"
-        echo "Cannot complete the build due to the compile error. Check logs above."
-        return 1
+        echo "❌ Build failed. Error details:" >&2
+        echo "$build_output" >&2
+        echo "Cannot complete the build due to the compile error. Check logs above." >&2
+        exit 1
     fi
 
     package_name=$(swift_package_name)
