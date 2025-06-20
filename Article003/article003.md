@@ -4,13 +4,13 @@
 
 *(This article assumes you have basic knowledge of shell scripts)*
 
-## The challenge of cersion management
+## The challenge of version management
 
-Managing versions in a shared library can be a daunting task. Whether you're working on an in-house project or maintaining a public package, keeping track of changes and their impact becomes increasingly complex as the project grows. Even for solo developers, there's a significant risk of introducing breaking changes without properly marking them with a major version bump.
+Shared library version management can be a daunting task. Whether you're working on an in-house project or maintaining a public package, keeping track of changes and their impact becomes increasingly complex as the project grows. Even for solo developers, there's a significant risk of introducing breaking changes without properly marking them with a major version bump.
 
 ## The solution: automated versioning
 
-This article presents a practical solution to this challenge through automation. We'll explore how to either fully automate the versioning process or verify manually proposed versions, ensuring consistent and correct semantic versioning across your Swift packages.
+This article presents a practical solution through automation. We'll explore how to either fully automate the versioning process or verify manually proposed versions, ensuring consistent and correct semantic versioning across your Swift packages.
 
 ## Understanding Swift Package Manager versioning
 
@@ -23,9 +23,9 @@ Let's break down our automation approach into clear, manageable steps:
 1. **Compare API states**: We'll extract the public interface from both the latest tagged version and the current codebase
 2. **Analyze differences**: We'll identify what has been added, modified, or removed in the public API
 3. **Apply versioning rules**: Based on the changes detected, we'll determine the appropriate version bump:
-   - **Patch** (x.x.Z) - for bug fixes and internal changes that don't affect the public API
-   - **Minor** (x.Y.x) - for new features that are backward compatible
-   - **Major** (X.x.x) - for breaking changes that require consumer code updates
+   - **Patch** (x.x.Z) - bug fixes and internal changes that don't affect the public API
+   - **Minor** (x.Y.x) - new features that are backward compatible
+   - **Major** (X.x.x) - breaking changes that require consumer code updates
 4. **Propose version**: We'll generate the next appropriate version number following semantic versioning principles
 
 ### Script foundation and argument parsing
@@ -171,7 +171,7 @@ function build_public_interface() {
 ```
 
 By default, after generating public interface, compiler verifies it. The `-no-verify-emitted-module-interface"` parameter disables that verification. 
-In our case we only need generated file and additional correctness of it is not needed.
+In our case we only need generated file and its verification is not required.
 `xcbeautify` is not a mandatory here, but it is nice to have. It prints nicely the building output which we may use in case of encountered build error.
 
 ### Extracting the public interface
