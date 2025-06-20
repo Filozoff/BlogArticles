@@ -53,6 +53,7 @@ function error_handler() {
 }
 
 function main() {
+    # We will fill it later.
 }
 
 # ENTRY POINT
@@ -65,7 +66,7 @@ while [[ $# -gt 0 ]]; do
             DESTINATION=${2}
             shift 2
         ;;
-        # Derived data path (optional).
+        # Derived data path (might be optional).
         -r|--derived-data-path)
             DERIVED_DATA_PATH=${2}
             ARCHIVE_PATH="$DERIVED_DATA_PATH/archive"
@@ -113,7 +114,7 @@ function swift_package_name() {
 }
 ```
 
-These helper functions serve two purposes: `reset()` cleans up temporary files and returns to the original directory, while `swift_package_name()` extracts the package name from `Package.swift` using Swift's built-in package description and jq for JSON parsing.
+These helper functions serve two purposes: `reset()` cleans up temporary files and returns to the original directory, while `swift_package_name()` extracts the package name from `Package.swift` using Swift's built-in package description and `jq` for JSON parsing.
 Make sure you have [`jq`](https://github.com/jqlang/jq) installed.
 
 ### Finding the current version tag
@@ -170,9 +171,9 @@ function build_public_interface() {
 }
 ```
 
-By default, after generating public interface, compiler verifies it. The `-no-verify-emitted-module-interface"` parameter disables that verification. 
+By default, after generating public interface, compiler verifies it. The `-no-verify-emitted-module-interface` parameter disables that verification. 
 In our case we only need generated file and its verification is not required.
-`xcbeautify` is not a mandatory here, but it is nice to have. It prints nicely the building output which we may use in case of encountered build error.
+[`xcbeautify`](https://github.com/cpisciotta/xcbeautify) is not a mandatory here, but it is nice to have. It prints nicely the building output which we may use in case of encountered build error.
 
 ### Extracting the public interface
 
