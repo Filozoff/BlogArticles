@@ -91,7 +91,7 @@ main
 The argument parsing allows parametrized inputs, like:
 
 ```bash
-sh propose_next_version.sh \
+propose_next_version.sh \
     --device "platform=iOS Simulator,name=iPhone 16,OS=18.0" \
     --derived-data-path ".build" \
     --scheme "FooBar"
@@ -312,13 +312,13 @@ The script above can be used to create a tag with every successful merge into th
 
 ```bash
 # Basic usage
-./propose_next_version.sh \
+chmod +x "propose_next_version.sh" && ./propose_next_version.sh \
     --device "platform=iOS Simulator,name=iPhone 16,OS=18.0" \
     --derived-data-path ".build" \
     --scheme "MyPackage"
 
 # In CI/CD pipeline
-NEXT_VERSION=$(./propose_next_version.sh --device "platform=iOS Simulator,name=iPhone 16,OS=18.0" --derived-data-path ".build" --scheme "MyPackage")
+NEXT_VERSION=$(chmod +x "propose_next_version.sh" && ./propose_next_version.sh --device "platform=iOS Simulator,name=iPhone 16,OS=18.0" --derived-data-path ".build" --scheme "MyPackage")
 git tag "$NEXT_VERSION"
 git push origin "$NEXT_VERSION"
 ```
